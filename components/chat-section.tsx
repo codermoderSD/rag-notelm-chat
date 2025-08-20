@@ -14,8 +14,6 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import rehypeSanitize from "rehype-sanitize"
 import rehypeHighlight from "rehype-highlight"
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 interface Message {
   id: string
@@ -227,13 +225,9 @@ export function ChatSection() {
                           code: ({ className, children, ...props }: React.HTMLProps<HTMLElement> & { className?: string }) => {
                             const match = /language-(\w+)/.exec(className || '')
                             const isCodeBlock = match && match.length > 1
-
                             if (!isCodeBlock) {
-                              return <code className="bg-gray-900 px-1 py-0.5 rounded text-xs" {...props}>{children}</code>
+                              return <code className="bg-[#1e1e1e] border border-[#333] px-1 py-0.5 rounded text-xs font-mono" {...props}>{children}</code>
                             }
-                            return <SyntaxHighlighter language="javascript" style={vs}>
-                              {children}
-                            </SyntaxHighlighter>
                           }
                         }}
                       >
