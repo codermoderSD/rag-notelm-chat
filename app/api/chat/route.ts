@@ -16,18 +16,19 @@ interface ChatRequest {
   history: Message[]
   apiKey: string
   provider: string
+  userId: string
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body: ChatRequest = await request.json()
-    const { message, history, apiKey, provider } = body
+    const { message, history, apiKey, provider, userId } = body
 
     if (!message || typeof message !== "string") {
       return NextResponse.json({ error: "Message is required" }, { status: 400 })
     }
 
-    const response = await processMessageWithRAG(message, history, apiKey, provider)
+    const response = await processMessageWithRAG(message, history, apiKey, provider, userId)
 
     return NextResponse.json({
       message: response,
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function processMessageWithRAG(message: string, history: Message[], apiKey: string, provider: string): Promise<string> {
+async function processMessageWithRAG(message: string, history: Message[], apiKey: string, provider: string, userId: string): Promise<string> {
   const client = new OpenAI({
     apiKey: apiKey,
     baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
@@ -53,18 +54,17 @@ async function processMessageWithRAG(message: string, history: Message[], apiKey
     apiKey: apiKey,
   });
 
-  const context = await embeddings.embedQuery(message);
   // Query your Qdrant vector database for relevant documents
   const vectorStore = await QdrantVectorStore.fromExistingCollection(
     embeddings,
     {
       url: process.env.QDRANT_URL,
-      collectionName: "notelm",
+      collectionName: `notelm_${userId}`,
       apiKey: process.env.QUADRANT_API_KEY,
     }
-  )
+  );
 
-  console.log(context)
+  console.log("Vector store:", vectorStore);
 
   // Search for relevant documents
   const vectorSearcher = vectorStore.asRetriever({

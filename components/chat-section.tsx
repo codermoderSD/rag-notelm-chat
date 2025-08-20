@@ -19,7 +19,7 @@ interface Message {
   id: string
   role: "user" | "assistant"
   content: string
-  timestamp: Date
+  timestamp: string
 }
 
 function IndexingLoader() {
@@ -66,10 +66,12 @@ export function ChatSection() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const [apiKeyInput, setApiKeyInput] = useState<string>(typeof window !== "undefined" ? localStorage.getItem("apiKey") || "" : "");
+  const [userId, setUserId] = useState<string>(typeof window !== "undefined" ? localStorage.getItem("userId") || "" : "");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setApiKeyInput(localStorage.getItem("apiKey") || "");
+      setUserId(localStorage.getItem("userId") || "");
     }
   }, []);
 
@@ -85,10 +87,10 @@ export function ChatSection() {
     if (!inputMessage.trim() || isLoading) return
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random()}`,
       role: "user",
       content: inputMessage,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     }
 
     setMessages((prev) => [...prev, userMessage])
@@ -106,6 +108,7 @@ export function ChatSection() {
           history: messages,
           provider: "google",
           apiKey: apiKeyInput,
+          userId,
         }),
       })
 
@@ -116,20 +119,20 @@ export function ChatSection() {
       const data = await response.json()
 
       const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `${Date.now()}-${Math.random()}`,
         role: "assistant",
         content: data.message || "I'm sorry, I couldn't process your request right now.",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       }
 
       setMessages((prev) => [...prev, assistantMessage])
     } catch (error) {
       console.error("Error sending message:", error)
       const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `${Date.now()}-${Math.random()}`,
         role: "assistant",
         content: "I'm sorry, there was an error processing your message. Please try again.",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       }
       setMessages((prev) => [...prev, errorMessage])
     } finally {
@@ -144,8 +147,9 @@ export function ChatSection() {
     }
   }
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  const formatTime = (date: string | Date) => {
+    const d = typeof date === "string" ? new Date(date) : date;
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   }
 
   const readyDocuments = documents.filter((doc) => doc.status === "ready")
@@ -293,13 +297,6 @@ export function ChatSection() {
             {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
         </div>
-        <p className="text-xs text-gray-400 mt-2">
-          {isIndexing
-            ? "Processing documents... Please wait"
-            : hasDocuments
-              ? "Press Enter to send, Shift+Enter for new line"
-              : "Upload documents on the left to enable chat"}
-        </p>
       </div>
     </div>
   )

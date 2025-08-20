@@ -6,6 +6,7 @@ import { TaskType } from "@google/generative-ai";
 export async function DELETE(req: NextRequest) {
     const id = req.nextUrl.searchParams.get("id") || "";
     const apiKey = req.headers.get("Authorization")?.replace("Bearer ", "");
+    const userId = req.headers.get("X-User-ID");
 
     // Initialize the Qdrant store with existing collection
     const vectorStore = await QdrantVectorStore.fromExistingCollection(
@@ -17,8 +18,8 @@ export async function DELETE(req: NextRequest) {
         }),
         {
             url: process.env.QDRANT_URL!,
-            collectionName: "notelm",
-            apiKey: process.env.QDRANT_API_KEY,
+            collectionName: `notelm_${userId}`,
+            apiKey: process.env.QUADRANT_API_KEY,
         }
     );
 

@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       filename = formData.get("title") as string;
       body.apiKey = formData.get("apiKey") as string;
       body.provider = formData.get("provider") as string;
+      body.userId = formData.get("userId") as string;
 
       const file = formData.get("file") as File;
       if (!file) {
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
       body = await request.json();
     }
 
-    const { type, content, url, apiKey, provider } = body;
+    const { type, content, url, apiKey, provider, userId } = body;
 
     if (!["pdf", "text", "website"].includes(type)) {
       return NextResponse.json({ error: "Invalid document type" }, { status: 400 });
@@ -70,7 +71,8 @@ export async function POST(request: NextRequest) {
       url,
       filename: tempFilePath || filename,
       apiKey,
-      provider,
+      provider: provider || "google",
+      userId,
     });
 
     if (tempFilePath && fs.existsSync(tempFilePath)) {
@@ -90,7 +92,7 @@ export async function POST(request: NextRequest) {
 
 async function processDocumentForRAG(
   type: string,
-  data: { content?: string; url?: string; filename?: string; apiKey?: string; provider?: string }
+  data: { content?: string; url?: string; filename?: string; apiKey?: string; provider?: string; userId?: string }
 ): Promise<{ documentId: string }> {
   // Load document
   let loader;
@@ -113,13 +115,13 @@ async function processDocumentForRAG(
   //  Split content
   const splitter = new RecursiveCharacterTextSplitter({
     chunkSize: 1000,
-    chunkOverlap: 200,
+    chunkOverlap: 1,
   });
   const output = await splitter.splitDocuments(docs);
 
   //  Generate embeddings
   let embeddings;
-  if (data.provider === "google" || !data.provider) {
+  if (data.provider) {
     embeddings = new GoogleGenerativeAIEmbeddings({
       apiKey: data.apiKey,
       model: "text-embedding-004",
@@ -132,14 +134,19 @@ async function processDocumentForRAG(
     throw new Error("Unsupported provider or missing embeddings implementation.");
   }
 
-  // Store embeddings in Qdrant
-  const vectorStore = await QdrantVectorStore.fromDocuments(output, embeddings, {
-    url: process.env.QDRANT_URL,
-    collectionName: "notelm",
-    apiKey: process.env.QUADRANT_API_KEY,
-  });
+  // create new user id
+  console.log("Creating new user ID:", data.userId);
 
-  console.log(vectorStore)
+  // Store embeddings in Qdrant
+  await QdrantVectorStore.fromDocuments(output, embeddings, {
+    url: process.env.QDRANT_URL,
+    collectionName: `notelm_${data.userId}`,
+    apiKey: process.env.QUADRANT_API_KEY,
+  }).then(() => {
+    console.log("Embeddings stored successfully");
+  }).catch((error) => {
+    console.error("Error storing embeddings:", error);
+  });
 
   // Generate unique documentId
   const documentId = Date.now().toString();

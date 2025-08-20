@@ -14,12 +14,13 @@ interface Document {
   file?: File;
   apiKey?: string;
   provider?: string;
+  userId?: string;
 }
 
 interface DocumentContextType {
   documents: Document[];
   addDocument: (doc: Omit<Document, "id" | "status">) => Promise<void>;
-  removeDocument: (id: string, apiKey: string) => void;
+  removeDocument: (id: string, apiKey: string, userId: string) => void;
   isUploading: boolean;
 }
 
@@ -60,6 +61,7 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
         formData.append("title", docData.title || docData.file.name);
         formData.append("provider", docData.provider || "");
         formData.append("apiKey", docData.apiKey || "");
+        formData.append("userId", docData.userId || "");
 
         response = await fetch("/api/upload", {
           method: "POST",
@@ -74,6 +76,7 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
         formData.append("title", docData.title || textFile.name);
         formData.append("provider", docData.provider || "");
         formData.append("apiKey", docData.apiKey || "");
+        formData.append("userId", docData.userId || "");
 
         response = await fetch("/api/upload", {
           method: "POST",
@@ -93,6 +96,7 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
             filename: docData.title,
             provider: docData.provider,
             apiKey: docData.apiKey,
+            userId: docData.userId,
           }),
         });
       }
@@ -125,13 +129,14 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
   };
 
   /**  Remove document */
-  const removeDocument = async (id: string, apiKey: string) => {
+  const removeDocument = async (id: string, apiKey: string, userId: string) => {
     setDocuments((prev) => prev.filter((doc) => doc.id !== id));
     await fetch(`/api/documents/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`,
+        "X-User-ID": userId,
       },
     });
   };

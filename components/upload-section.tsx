@@ -10,13 +10,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { X, FileText, Globe, Upload, Plus, Loader2, AlertCircle, CheckCircle } from "lucide-react"
 import { useDocuments } from "@/contexts/document-context"
+import { getUserId } from "@/lib/utils"
 
 export function UploadSection() {
   // Gemini API Key state
   const [apiKeyInput, setApiKeyInput] = useState<string>(typeof window !== "undefined" ? localStorage.getItem("apiKey") || "" : "");
+  const [userId, setUserId] = useState<string>(typeof window !== "undefined" ? localStorage.getItem("userId") || "" : "");
   useEffect(() => {
     if (typeof window !== "undefined") {
       setApiKeyInput(localStorage.getItem("apiKey") || "");
+      const userid = getUserId();
+      localStorage.setItem("userId", userid);
+      setUserId(userid);
     }
   }, []);
 
@@ -49,6 +54,7 @@ export function UploadSection() {
       title: `Text Document ${documents.filter((d) => d.type === "text").length + 1}`,
       content: textInput,
       apiKey: apiKeyInput,
+      userId: userId,
     });
     setTextInput("");
   }
@@ -66,6 +72,7 @@ export function UploadSection() {
         title: hostname,
         url: websiteUrl,
         apiKey: apiKeyInput,
+        userId: userId,
       });
       setWebsiteUrl("");
     } catch (error) {
@@ -98,6 +105,7 @@ export function UploadSection() {
           size: file.size,
           file: file,
           apiKey: apiKeyInput,
+          userId: userId,
         });
       }
     }
@@ -262,8 +270,8 @@ export function UploadSection() {
         </Tabs>
 
         {/* Documents List */}
-        <div className="mt-6 md:mt-8">
-          <h3 className="text-lg font-medium mb-4 text-white">Added Sources ({sourcesCount}/{SOURCE_LIMIT})</h3>
+        <div className="mt-3 md:mt-4">
+          <h3 className="text-xs font-medium mb-4 text-gray-400">Added Sources ({sourcesCount}/{SOURCE_LIMIT})</h3>
           <div className="space-y-2">
             {documents.map((doc, idx) => (
               <Card key={doc.id} className="p-3 md:p-4 bg-gray-900 border-gray-800">
@@ -290,7 +298,7 @@ export function UploadSection() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeDocument(doc.id, apiKeyInput)}
+                    onClick={() => removeDocument(doc.id, apiKeyInput, userId)}
                     disabled={doc.status === "uploading"}
                     className="text-gray-400 hover:text-red-400 hover:bg-gray-800 ml-2"
                   >
