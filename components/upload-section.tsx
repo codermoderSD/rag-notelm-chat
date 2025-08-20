@@ -10,12 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { X, FileText, Globe, Upload, Plus, Loader2, AlertCircle, CheckCircle } from "lucide-react"
 import { useDocuments } from "@/contexts/document-context"
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem
-} from "@/components/ui/select"
 
 export function UploadSection() {
   // Gemini API Key state

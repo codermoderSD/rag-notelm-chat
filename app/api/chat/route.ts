@@ -64,6 +64,8 @@ async function processMessageWithRAG(message: string, history: Message[], apiKey
     }
   )
 
+  console.log(context)
+
   // Search for relevant documents
   const vectorSearcher = vectorStore.asRetriever({
     k: 4,
@@ -89,17 +91,4 @@ async function processMessageWithRAG(message: string, history: Message[], apiKey
   });
 
   return completion.choices[0].message.content || "No relevant information found in the documents.";
-}
-
-// Helper function to format chat history for RAG context
-export function formatChatHistory(history: Message[]): string {
-  return history
-    .slice(-5) // Keep last 5 messages for context
-    .map((msg) => `${msg.role}: ${msg.content}`)
-    .join("\n")
-}
-
-// Helper function to validate message content
-export function validateMessage(message: string): boolean {
-  return message.trim().length > 0 && message.length <= 4000
 }

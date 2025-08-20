@@ -9,13 +9,6 @@ import { QdrantVectorStore } from "@langchain/qdrant";
 import fs from "fs";
 import path from "path";
 
-interface UploadRequest {
-  type: "text" | "pdf" | "website";
-  content?: string;
-  url?: string;
-  filename?: string;
-}
-
 const LoaderMap: Record<string, any> = {
   text: TextLoader,
   pdf: PDFLoader,
@@ -145,6 +138,8 @@ async function processDocumentForRAG(
     collectionName: "notelm",
     apiKey: process.env.QUADRANT_API_KEY,
   });
+
+  console.log(vectorStore)
 
   // Generate unique documentId
   const documentId = Date.now().toString();

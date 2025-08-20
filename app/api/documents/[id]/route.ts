@@ -3,8 +3,8 @@ import { QdrantVectorStore } from "@langchain/qdrant";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;
+export async function DELETE(req: NextRequest) {
+    const id = req.nextUrl.searchParams.get("id") || "";
     const apiKey = req.headers.get("Authorization")?.replace("Bearer ", "");
 
     // Initialize the Qdrant store with existing collection

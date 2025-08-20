@@ -65,13 +65,11 @@ export function ChatSection() {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const [provider, setProvider] = useState<string>(typeof window !== "undefined" ? localStorage.getItem("provider") || "google" : "google");
-  const [apiKeyInput, setApiKeyInput] = useState<string>(typeof window !== "undefined" ? localStorage.getItem("googleApiKey") || "" : "");
+  const [apiKeyInput, setApiKeyInput] = useState<string>(typeof window !== "undefined" ? localStorage.getItem("apiKey") || "" : "");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setApiKeyInput(localStorage.getItem("apiKey") || "");
-      setProvider(localStorage.getItem("provider") || "google");
     }
   }, []);
 
@@ -106,7 +104,7 @@ export function ChatSection() {
         body: JSON.stringify({
           message: inputMessage,
           history: messages,
-          provider,
+          provider: "google",
           apiKey: apiKeyInput,
         }),
       })
