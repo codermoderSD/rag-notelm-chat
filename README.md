@@ -1,6 +1,9 @@
 # NoteLM
 This project is a clone of NotebookLM, an AI powered app to help users manage and interact with their documents more effectively. It leverages RAG (Retrieval-Augmented Generation) to provide context-aware responses and improve user experience.
 
+Watch the demo
+[![Watch the demo](https://img.youtube.com/vi/QMz2WTRlKyg/0.jpg)](https://www.youtube.com/watch?v=QMz2WTRlKyg)
+
 ## Features
 - Document Upload: Users can upload pdf, text and website url for analysis.
 - Contextual Responses: The app provides answers based on the content of the uploaded documents.
