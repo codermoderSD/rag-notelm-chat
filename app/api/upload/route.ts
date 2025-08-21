@@ -141,7 +141,7 @@ async function processDocumentForRAG(
   await QdrantVectorStore.fromDocuments(output, embeddings, {
     url: process.env.QDRANT_URL,
     collectionName: `notelm_${data.userId}`,
-    apiKey: process.env.QUADRANT_API_KEY,
+    // apiKey: process.env.QUADRANT_API_KEY,
   }).then(() => {
     console.log("Embeddings stored successfully");
   }).catch((error) => {

@@ -1,56 +1,121 @@
-# NoteLM
-This project is a clone of NotebookLM, an AI powered app to help users manage and interact with their documents more effectively. It leverages RAG (Retrieval-Augmented Generation) to provide context-aware responses and improve user experience.
+# **NoteLM**
 
-Watch the demo
+NoteLM is a **NotebookLM-inspired app** built to explore **Retrieval-Augmented Generation (RAG)** in a practical way. It helps users manage and interact with their documents by enabling contextual AI-powered conversations. The app is powered by **Next.js**, **LangChain**, and **Qdrant**.
+
+---
+
+## **Demo**
+
 [![Watch the demo](https://img.youtube.com/vi/QMz2WTRlKyg/0.jpg)](https://www.youtube.com/watch?v=QMz2WTRlKyg)
 
-## Features
-- Document Upload: Users can upload pdf, text and website url for analysis.
-- Contextual Responses: The app provides answers based on the content of the uploaded documents.
-- User-Friendly Interface: The chat interface is designed for easy interaction.
+---
 
-# Future Enhancements
-- Multi-Language Support: Expand the app's capabilities to support multiple languages.
-- Advanced Document Analysis: Implement more sophisticated algorithms for document analysis and summarization.
-- User Customization: Allow users to customize the chat interface and experience.
+## **Features**
 
-## Setup
+* Upload PDFs, add website URLs, or input text for analysis
+* Generate context-aware responses using RAG
+* Simple and clean chat interface for easy interaction
 
-To set up the project locally, follow these steps:
+---
 
-1. Clone the repository:
+## **Tech Stack**
+
+* **Next.js** – Frontend framework
+* **LangChain** – For building the RAG workflow
+* **Qdrant** – Vector database for storing embeddings
+* **OpenAI or any LLM** – For response generation
+
+---
+
+## **Why I Built This**
+
+This project was a hands-on way to learn **Generative AI with JavaScript**.
+Key things I explored:
+
+* How vector databases like Qdrant store and retrieve embeddings
+* How LangChain orchestrates the RAG pipeline
+* Handling multiple content types (PDF, web, text) effectively
+
+---
+
+## **Future Scope**
+
+* Multi-language document support
+* Advanced document analysis (summarization, insights, semantic search)
+* Customizable chat interface
+* Deployment for public use with optimizations
+
+---
+
+## **Setup Instructions**
+
+### **1. Clone the repository**
 
 ```bash
 git clone https://github.com/codermoderSD/rag-notelm-chat
-```
-
-2. Navigate to the project directory:
-
-```bash
 cd rag-notelm-chat
 ```
 
-3. Install the dependencies:
+### **2. Install dependencies**
 
 ```bash
 pnpm install
 ```
 
-4. Configure Quadrant DB Environment Variables:
+### **3. Start Qdrant using Docker**
 
-Create a `.env` file in the root of the project and add your Quadrant DB credentials:
+Ensure you have Docker and Docker Compose installed. Then run:
 
 ```bash
-QDRANT_URL=your_db_url:port
-QUADRANT_API_KEY=your_db_key
+docker-compose up -d
 ```
 
-Make sure to replace `your_db_url` and `your_db_key` with your actual Quadrant DB credentials.
+This will start Qdrant locally at:
 
-5. Start the development server:
+```
+http://localhost:6333
+```
+
+To view the **Qdrant dashboard** and inspect your collections:
+
+```
+http://localhost:6333/dashboard
+```
+
+> **Note:** For local setup, you do **not** need an API key.
+
+---
+
+### **4. Configure environment variables**
+
+Create a `.env` file in the root directory with:
+
+```bash
+QDRANT_URL=http://localhost:6333
+```
+
+---
+
+### **5. Run the development server**
 
 ```bash
 pnpm run dev
 ```
 
-6. Open your browser and go to `http://localhost:3000` to see the app in action.
+---
+
+### **6. Open the app in your browser**
+
+```
+http://localhost:3000
+```
+
+---
+
+## **Contributing**
+
+This is an open-source learning project. If you’d like to improve it:
+
+* Fork the repo
+* Create a feature branch
+* Submit a pull request

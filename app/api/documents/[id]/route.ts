@@ -19,7 +19,7 @@ export async function DELETE(req: NextRequest) {
         {
             url: process.env.QDRANT_URL!,
             collectionName: `notelm_${userId}`,
-            apiKey: process.env.QUADRANT_API_KEY,
+            // apiKey: process.env.QUADRANT_API_KEY,
         }
     );
 
